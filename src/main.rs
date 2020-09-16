@@ -1,6 +1,6 @@
-use std::fs;
+use std::env;
 
 fn main() {
-    let content = fs::read_to_string("./Carggo.toml").expect("Can't read toml file");
-    println!("{}", content);
+   let port = env::var("PORT").unwrap_or("3000".to_string());
+   println!("{}", port);
 }
