@@ -1,12 +1,19 @@
-use std::collections::HashMap;
 use chrono::NaiveDate;
+use std::collections::HashMap;
 
 fn main() {
     match get_current_year() {
         Ok(date) => println!("We have time travelled! {}", date),
-        Err(e) => eprintln!("Oh Noes, we don't know {}", e)
+        // Err(e) => eprintln!("Oh Noes, we don't know {}", e)
+        Err(e) => {
+            eprintln!("Oh Noes, we don't know");
+            if let Some(err) = e.downcast_ref::<reqwest::Error>() {
+                eprintln!("Request Error: {}", err)
+            } else if let Some(err) = e.downcast_ref::<chrono::format::ParseError>() {
+                eprintln!("Parse Error: {}", err)
+            }
+        }
     }
-  
 }
 
 fn get_current_year() -> Result<String, Box<dyn std::error::Error>> {
@@ -15,10 +22,9 @@ fn get_current_year() -> Result<String, Box<dyn std::error::Error>> {
 
     // let date = res["years"].to_string();
 
-    let formatted_date =  format!("{}-{}-{}", res["years"], res["months"] + 1, res["date"]);
+    let formatted_date = format!("{}-{}-{}", res["years"], res["months"] + 1, res["date"]);
     let parsed_date = NaiveDate::parse_from_str(formatted_date.as_str(), "%Y-%m-%d")?;
     let date = parsed_date.format("%Y %B %d").to_string();
 
     Ok(date)
 }
-
