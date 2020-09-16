@@ -1,3 +1,6 @@
+use std::fs;
+
 fn main() {
-    println!("Hello, world!");
+    let content = fs::read_to_string("./Cargo.toml").unwrap();
+    println!("{}", content);
 }
