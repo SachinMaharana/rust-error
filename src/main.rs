@@ -10,22 +10,9 @@ fn main() {
 
 fn get_current_year() -> Result<String, reqwest::Error> {
     let url = "https://postman-echo.com/time/object";
-    let result = reqwest::blocking::get(url);
+    let res = reqwest::blocking::get(url)?.json::<HashMap<String, i32>>()?;
 
-    let response = match result {
-        Ok(res) => res,
-        Err(err) => return Err(err)
-    };
-
-
-    let body = response.json::<HashMap<String, i32>>();
-
-    let json = match body {
-        Ok(json) => json,
-        Err(err) => return Err(err),
-    };
-
-    let date = json["years"].to_string();
+    let date = res["years"].to_string();
 
     Ok(date)
 }
