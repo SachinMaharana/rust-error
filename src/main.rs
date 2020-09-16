@@ -9,7 +9,7 @@ fn main() {
   
 }
 
-fn get_current_year() -> Result<String, reqwest::Error> {
+fn get_current_year() -> Result<String, Box<dyn std::error::Error>> {
     let url = "https://postman-echo.com/time/object";
     let res = reqwest::blocking::get(url)?.json::<HashMap<String, i32>>()?;
 
