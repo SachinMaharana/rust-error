@@ -13,3 +13,15 @@ impl fmt::Display for MyCustomError {
         }
     }
 }
+
+impl From<reqwest::Error> for MyCustomError {
+    fn from(_: reqwest::Error) -> Self {
+        MyCustomError::HttpError
+    }
+}
+
+impl From<chrono::format::ParseError> for MyCustomError {
+  fn from(_: chrono::format::ParseError) -> Self {
+     MyCustomError::ParseError
+   }
+ }
