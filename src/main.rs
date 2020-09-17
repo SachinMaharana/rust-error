@@ -1,5 +1,8 @@
 use chrono::NaiveDate;
+use error::MyCustomError;
 use std::collections::HashMap;
+
+mod error;
 
 fn main() {
     match get_current_year() {
@@ -16,14 +19,18 @@ fn main() {
     }
 }
 
-fn get_current_year() -> Result<String, Box<dyn std::error::Error>> {
+fn get_current_year() -> Result<String, MyCustomError> {
     let url = "https://postman-echo.com/time/object";
-    let res = reqwest::blocking::get(url)?.json::<HashMap<String, i32>>()?;
-
+    let res = reqwest::blocking::get(url)
+    .map_err(|_| MyCustomError::HttpError)?
+    ?.json::<HashMap<String, i32>>()
+    .map_err(|_| MyCustomError::HttpError)?;
     // let date = res["years"].to_string();
 
     let formatted_date = format!("{}-{}-{}", res["years"], res["months"] + 1, res["date"]);
     let parsed_date = NaiveDate::parse_from_str(formatted_date.as_str(), "%Y-%m-%d")?;
+    let parsed_date = NaiveDate::parse_from_str(formatted_date.as_str(), "%Y-%m-%d")
+    .map_err(|_| MyCustomError::ParseError)?;
     let date = parsed_date.format("%Y %B %d").to_string();
 
     Ok(date)
