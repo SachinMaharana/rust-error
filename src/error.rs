@@ -1,3 +1,5 @@
+use std::fmt;
+
 pub enum MyCustomError {
     HttpError,
     ParseError,
